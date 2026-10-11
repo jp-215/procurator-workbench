@@ -1,4 +1,4 @@
-"""Order lifecycle — see SPEC.md AC-05..AC-15."""
+"""Order lifecycle — see SPEC.md AC-05..AC-15, AC-26..AC-32."""
 from __future__ import annotations
 
 import time
@@ -23,6 +23,7 @@ class Order:
     items: list[dict[str, Any]] = field(default_factory=list)
     status: str = "pending"
     created_at: float = 0.0
+    refund_amount: float = 0.0
 
     @property
     def total(self) -> float:
@@ -78,6 +79,7 @@ def create_order(
         items=items,
         status="pending",
         created_at=time.time(),
+        refund_amount=0.0,
     )
 
     _STORE.put(order.id, order)
@@ -134,6 +136,24 @@ def ship_order(order_id: str) -> Order:
         )
 
     order.status = "shipped"
+    _STORE.put(order.id, order)
+    return order
+
+
+def refund_order(order_id: str, token: str) -> Order:
+    order = get_order(order_id)
+
+    user_id = verify_token(token)
+    if user_id != order.user_id:
+        raise Forbidden("token does not belong to the order owner")
+
+    if order.status != "shipped":
+        raise InvalidTransition(
+            f"cannot refund order in status {order.status!r}"
+        )
+
+    order.status = "refunded"
+    order.refund_amount = order.total
     _STORE.put(order.id, order)
     return order
 
