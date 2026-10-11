@@ -1,29 +1,38 @@
 """Exception taxonomy. Do not rename — the spec references these names."""
+from __future__ import annotations
 
 
-class ValidationError(Exception):
+class OrdersError(Exception):
+    """Base class for all ordersvc exceptions."""
+
+
+class TokenExpired(OrdersError):
     pass
 
 
-class OrderNotFound(Exception):
+class TokenRevoked(OrdersError):
     pass
 
 
-class InvalidTransition(Exception):
+class InvalidToken(OrdersError):
     pass
 
 
-class Forbidden(Exception):
+class ValidationError(OrdersError):
     pass
 
 
-class TokenExpired(Exception):
+class OrderNotFound(OrdersError):
     pass
 
 
-class TokenRevoked(Exception):
+class InvalidTransition(OrdersError):
     pass
 
 
-class TransientError(Exception):
+class Forbidden(OrdersError):
+    pass
+
+
+class TransientError(OrdersError):
     pass
