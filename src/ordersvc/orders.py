@@ -1,4 +1,4 @@
-"""Order lifecycle — see SPEC.md AC-05..AC-15."""
+"""Order lifecycle — see SPEC.md AC-05..AC-15, AC-26..AC-32."""
 from __future__ import annotations
 
 import time
@@ -19,6 +19,11 @@ from ordersvc.store import MemoryStore
 _orders = MemoryStore()
 # Idempotency key -> order id.
 _idempotency = MemoryStore()
+
+# Recognized status values for the order status machine. `refunded` is
+# recognized here (mandate v2 scope change) but no transition logic into
+# or out of it beyond what is explicitly implemented below is wired yet.
+_STATUSES = {"pending", "paid", "shipped", "cancelled", "refunded"}
 
 
 def create_order(
@@ -45,6 +50,7 @@ def create_order(
         status="pending",
         created_at=time.time(),
         idempotency_key=idempotency_key,
+        refund_amount=0.0,
     )
     _orders.put(order_id, order)
     if idempotency_key is not None:

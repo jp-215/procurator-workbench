@@ -2,6 +2,7 @@
 
 Pure data structures only. No storage, validation, or side effects here.
 See SPEC.md AC-05, AC-08, AC-16..AC-19 for behavior that depends on these shapes.
+Refund support (mandate v2): see SPEC.md AC-26..AC-32 for `refund_amount`.
 """
 from __future__ import annotations
 
@@ -17,6 +18,7 @@ class Order:
     status: str = "pending"
     created_at: float = 0.0
     idempotency_key: str | None = None
+    refund_amount: float = 0.0
 
     @property
     def total(self) -> float:
