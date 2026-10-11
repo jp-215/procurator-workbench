@@ -123,6 +123,12 @@ def refund_order(order_id: str, token: str) -> Order:
 
 
 def list_orders(user_id: str | None = None, status: str | None = None) -> list[Order]:
+    # NOTE: filtering compares `status` directly against each order's stored
+    # status string with no hardcoded allow-list of valid statuses. This
+    # means any current or future status value (including "refunded") is
+    # matched correctly without needing changes here. Both predicates
+    # (user_id, status) are independently optional and, when both given,
+    # are combined with AND semantics (AC-14, AC-30).
     result: list[Order] = []
     for key in list(_store._data.keys()):
         order = _store.get(key)
