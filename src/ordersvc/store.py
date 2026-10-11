@@ -1,22 +1,15 @@
 """In-memory KV store — see SPEC.md AC-24..AC-25."""
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 
 class MemoryStore:
-    def __init__(self) -> None:
-        self._data: Dict[str, Any] = {}
-
     def put(self, key: str, value: Any) -> None:
-        self._data[key] = value
+        raise NotImplementedError  # TODO: AC-24
 
     def get(self, key: str) -> Any:
-        return self._data[key]
+        raise NotImplementedError  # TODO: AC-24
 
     def delete(self, key: str) -> None:
-        del self._data[key]
-
-
-# Shared default instance for other modules to use.
-default_store = MemoryStore()
+        raise NotImplementedError  # TODO: AC-25

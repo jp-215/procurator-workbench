@@ -2,37 +2,37 @@
 from __future__ import annotations
 
 
-class OrdersError(Exception):
+class OrderServiceError(Exception):
     """Base class for all ordersvc exceptions."""
 
+    def __init__(self, message: str | None = None) -> None:
+        super().__init__(message)
+        self.message = message
 
-class TokenExpired(OrdersError):
+
+class TokenExpired(OrderServiceError):
     pass
 
 
-class TokenRevoked(OrdersError):
+class TokenRevoked(OrderServiceError):
     pass
 
 
-class InvalidToken(OrdersError):
+class ValidationError(OrderServiceError):
     pass
 
 
-class ValidationError(OrdersError):
+class OrderNotFound(OrderServiceError):
     pass
 
 
-class OrderNotFound(OrdersError):
+class InvalidTransition(OrderServiceError):
     pass
 
 
-class InvalidTransition(OrdersError):
+class Forbidden(OrderServiceError):
     pass
 
 
-class Forbidden(OrdersError):
-    pass
-
-
-class TransientError(OrdersError):
+class TransientError(OrderServiceError):
     pass
