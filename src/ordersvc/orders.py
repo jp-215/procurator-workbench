@@ -20,9 +20,7 @@ _orders = MemoryStore()
 # Idempotency key -> order id.
 _idempotency = MemoryStore()
 
-# Recognized status values for the order status machine. `refunded` is
-# recognized here (mandate v2 scope change) but no transition logic into
-# or out of it beyond what is explicitly implemented below is wired yet.
+# Recognized status values for the order status machine.
 _STATUSES = {"pending", "paid", "shipped", "cancelled", "refunded"}
 
 
@@ -99,6 +97,23 @@ def ship_order(order_id: str) -> Order:
             f"Cannot ship order {order_id!r} from status {order.status!r}"
         )
     order.status = "shipped"
+    _orders.put(order_id, order)
+    return order
+
+
+def refund_order(order_id: str, token: str) -> Order:
+    order = get_order(order_id)
+    token_user_id = auth.verify_token(token)
+    if token_user_id != order.user_id:
+        raise Forbidden(
+            f"Token user {token_user_id!r} is not the owner of order {order_id!r}"
+        )
+    if order.status != "shipped":
+        raise InvalidTransition(
+            f"Cannot refund order {order_id!r} from status {order.status!r}"
+        )
+    order.status = "refunded"
+    order.refund_amount = round(order.total, 2)
     _orders.put(order_id, order)
     return order
 
