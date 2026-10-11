@@ -1,24 +1,11 @@
 """ordersvc — implement per SPEC.md. Graded by a hidden acceptance suite."""
 from ordersvc.errors import (  # noqa: F401
-    OrderSvcError,
+    Forbidden,
+    InvalidTransition,
+    OrderNotFound,
+    OrdersvcError,
     TokenExpired,
     TokenRevoked,
-    InvalidToken,
-    ValidationError,
-    OrderNotFound,
-    InvalidTransition,
-    Forbidden,
     TransientError,
+    ValidationError,
 )
-
-__all__ = [
-    "OrderSvcError",
-    "TokenExpired",
-    "TokenRevoked",
-    "InvalidToken",
-    "ValidationError",
-    "OrderNotFound",
-    "InvalidTransition",
-    "Forbidden",
-    "TransientError",
-]
