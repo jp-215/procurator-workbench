@@ -2,7 +2,7 @@
 
 
 class OrderSvcError(Exception):
-    """Common base for all package-specific exceptions."""
+    """Base exception for all ordersvc errors."""
     pass
 
 
@@ -30,6 +30,13 @@ class Forbidden(OrderSvcError):
     pass
 
 
-class TransientError(OrderSvcError, Exception):
-    """May also be treated as a plain Exception subclass by consumers."""
+class TransientError(OrderSvcError):
+    passss
+
+
+class Forbidden(OrderSvcError):
+    pass
+
+
+class TransientError(OrderSvcError):
     pass
