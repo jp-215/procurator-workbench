@@ -2,9 +2,11 @@
 
 
 class OrderSvcError(Exception):
-    """Common base for all ordersvc exceptions."""
+    """Base class for all ordersvc exceptions."""
     pass
 
+
+# --- Auth exceptions ---
 
 class TokenExpired(OrderSvcError):
     pass
@@ -13,6 +15,12 @@ class TokenExpired(OrderSvcError):
 class TokenRevoked(OrderSvcError):
     pass
 
+
+class InvalidToken(OrderSvcError):
+    pass
+
+
+# --- Orders exceptions ---
 
 class ValidationError(OrderSvcError):
     pass
@@ -29,6 +37,8 @@ class InvalidTransition(OrderSvcError):
 class Forbidden(OrderSvcError):
     pass
 
+
+# --- Retry exceptions ---
 
 class TransientError(OrderSvcError):
     pass
