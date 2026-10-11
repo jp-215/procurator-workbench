@@ -1,19 +1,8 @@
-"""Order lifecycle — see SPEC.md AC-05..AC-15, AC-26..AC-32."""
+"""Order lifecycle — see SPEC.md AC-05..AC-15."""
 from __future__ import annotations
 
-import time
-import uuid
 from dataclasses import dataclass, field
 from typing import Any
-
-from ordersvc.auth import verify_token
-from ordersvc.errors import (
-    ValidationError,
-    OrderNotFound,
-    InvalidTransition,
-    Forbidden,
-)
-from ordersvc.store import MemoryStore
 
 
 @dataclass
@@ -23,154 +12,36 @@ class Order:
     items: list[dict[str, Any]] = field(default_factory=list)
     status: str = "pending"
     created_at: float = 0.0
-    refund_amount: float = 0.0
 
     @property
     def total(self) -> float:
-        return round(
-            sum(item["qty"] * item["unit_price"] for item in self.items), 2
-        )
+        raise NotImplementedError  # TODO: AC-08
 
 
-# Module-level storage
-_STORE = MemoryStore()
-_IDEMPOTENCY: dict[str, str] = {}
-
-
-def _validate_items(items: list[dict[str, Any]]) -> None:
-    if not items:
-        raise ValidationError("items must not be empty")
-
-    for item in items:
-        if not isinstance(item, dict):
-            raise ValidationError("each item must be a dict")
-
-        if "sku" not in item or "qty" not in item or "unit_price" not in item:
-            raise ValidationError("item missing required fields")
-
-        sku = item["sku"]
-        qty = item["qty"]
-        unit_price = item["unit_price"]
-
-        if not isinstance(sku, str):
-            raise ValidationError("item.sku must be a str")
-
-        if not isinstance(qty, int) or isinstance(qty, bool):
-            raise ValidationError("item.qty must be an int")
-
-        if not isinstance(unit_price, (int, float)) or isinstance(unit_price, bool):
-            raise ValidationError("item.unit_price must be a float")
-
-
-def create_order(
-    user_id: str,
-    items: list[dict[str, Any]],
-    idempotency_key: str | None = None,
-) -> Order:
-    if idempotency_key is not None and idempotency_key in _IDEMPOTENCY:
-        existing_id = _IDEMPOTENCY[idempotency_key]
-        return get_order(existing_id)
-
-    _validate_items(items)
-
-    order = Order(
-        id=uuid.uuid4().hex,
-        user_id=user_id,
-        items=items,
-        status="pending",
-        created_at=time.time(),
-        refund_amount=0.0,
-    )
-
-    _STORE.put(order.id, order)
-
-    if idempotency_key is not None:
-        _IDEMPOTENCY[idempotency_key] = order.id
-
-    return order
+def create_order(user_id: str, items: list[dict[str, Any]], idempotency_key: str | None = None) -> Order:
+    raise NotImplementedError  # TODO: AC-05, AC-06, AC-07
 
 
 def get_order(order_id: str) -> Order:
-    try:
-        return _STORE.get(order_id)
-    except KeyError:
-        raise OrderNotFound(f"no order with id {order_id!r}")
+    raise NotImplementedError  # TODO: AC-09, AC-10
 
 
 def cancel_order(order_id: str) -> Order:
-    order = get_order(order_id)
-
-    if order.status != "pending":
-        raise InvalidTransition(
-            f"cannot cancel order in status {order.status!r}"
-        )
-
-    order.status = "cancelled"
-    _STORE.put(order.id, order)
-    return order
+    raise NotImplementedError  # TODO: AC-11, AC-12
 
 
 def pay_order(order_id: str, token: str) -> Order:
-    order = get_order(order_id)
-
-    user_id = verify_token(token)
-    if user_id != order.user_id:
-        raise Forbidden("token does not belong to the order owner")
-
-    if order.status != "pending":
-        raise InvalidTransition(
-            f"cannot pay order in status {order.status!r}"
-        )
-
-    order.status = "paid"
-    _STORE.put(order.id, order)
-    return order
+    raise NotImplementedError  # TODO: AC-13, AC-15
 
 
 def ship_order(order_id: str) -> Order:
-    order = get_order(order_id)
-
-    if order.status != "paid":
-        raise InvalidTransition(
-            f"cannot ship order in status {order.status!r}"
-        )
-
-    order.status = "shipped"
-    _STORE.put(order.id, order)
-    return order
-
-
-def refund_order(order_id: str, token: str) -> Order:
-    order = get_order(order_id)
-
-    user_id = verify_token(token)
-    if user_id != order.user_id:
-        raise Forbidden("token does not belong to the order owner")
-
-    if order.status != "shipped":
-        raise InvalidTransition(
-            f"cannot refund order in status {order.status!r}"
-        )
-
-    order.status = "refunded"
-    order.refund_amount = order.total
-    _STORE.put(order.id, order)
-    return order
+    raise NotImplementedError  # TODO: AC-13
 
 
 def list_orders(user_id: str | None = None, status: str | None = None) -> list[Order]:
-    result = []
-    for order in _STORE.values():
-        if user_id is not None and order.user_id != user_id:
-            continue
-        if status is not None and order.status != status:
-            continue
-        result.append(order)
-    return result
+    raise NotImplementedError  # TODO: AC-14
 
 
 def _reset() -> None:
     """Test hook: clear all stored orders and idempotency records."""
-    global _STORE
-    _STORE = MemoryStore()
-    _IDEMPOTENCY.clear()
+    raise NotImplementedError
