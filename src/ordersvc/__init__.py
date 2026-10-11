@@ -3,7 +3,7 @@ from ordersvc.errors import (  # noqa: F401
     Forbidden,
     InvalidTransition,
     OrderNotFound,
-    OrdersvcError,
+    OrderSvcError,
     TokenExpired,
     TokenRevoked,
     TransientError,

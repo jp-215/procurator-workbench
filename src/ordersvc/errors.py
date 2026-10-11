@@ -1,33 +1,35 @@
 """Exception taxonomy. Do not rename — the spec references these names."""
 
 
-class OrdersvcError(Exception):
-    """Base class for all ordersvc exceptions."""
-
-
-class TokenExpired(OrdersvcError):
+class OrderSvcError(Exception):
+    """Common base for all package-specific exceptions."""
     pass
 
 
-class TokenRevoked(OrdersvcError):
+class TokenExpired(OrderSvcError):
     pass
 
 
-class ValidationError(OrdersvcError):
+class TokenRevoked(OrderSvcError):
     pass
 
 
-class OrderNotFound(OrdersvcError):
+class ValidationError(OrderSvcError):
     pass
 
 
-class InvalidTransition(OrdersvcError):
+class OrderNotFound(OrderSvcError):
     pass
 
 
-class Forbidden(OrdersvcError):
+class InvalidTransition(OrderSvcError):
     pass
 
 
-class TransientError(OrdersvcError):
+class Forbidden(OrderSvcError):
+    pass
+
+
+class TransientError(OrderSvcError, Exception):
+    """May also be treated as a plain Exception subclass by consumers."""
     pass
