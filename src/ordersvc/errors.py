@@ -1,29 +1,34 @@
 """Exception taxonomy. Do not rename — the spec references these names."""
 
 
-class ValidationError(Exception):
+class OrderSvcError(Exception):
+    """Common base for all ordersvc exceptions."""
     pass
 
 
-class OrderNotFound(Exception):
+class TokenExpired(OrderSvcError):
     pass
 
 
-class InvalidTransition(Exception):
+class TokenRevoked(OrderSvcError):
     pass
 
 
-class Forbidden(Exception):
+class ValidationError(OrderSvcError):
     pass
 
 
-class TokenExpired(Exception):
+class OrderNotFound(OrderSvcError):
     pass
 
 
-class TokenRevoked(Exception):
+class InvalidTransition(OrderSvcError):
     pass
 
 
-class TransientError(Exception):
+class Forbidden(OrderSvcError):
+    pass
+
+
+class TransientError(OrderSvcError):
     pass
