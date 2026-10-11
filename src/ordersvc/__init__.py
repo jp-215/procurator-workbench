@@ -28,6 +28,7 @@ from ordersvc.orders import (  # noqa: F401
     cancel_order,
     pay_order,
     ship_order,
+    refund_order,
     list_orders,
 )
 from ordersvc.pagination import (  # noqa: F401
@@ -63,6 +64,7 @@ __all__ = [
     "cancel_order",
     "pay_order",
     "ship_order",
+    "refund_order",
     "list_orders",
     # pagination
     "Page",
