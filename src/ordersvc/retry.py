@@ -4,6 +4,8 @@ from __future__ import annotations
 import time
 from typing import Any, Callable
 
+from ordersvc.errors import TransientError
+
 
 def retry_with_backoff(
     fn: Callable[[], Any],
@@ -11,4 +13,14 @@ def retry_with_backoff(
     base_delay: float = 0.1,
     sleep: Callable[[float], None] = time.sleep,
 ) -> Any:
-    raise NotImplementedError  # TODO: AC-20..AC-23
+    last_exc: TransientError | None = None
+    for attempt in range(max_attempts):
+        try:
+            return fn()
+        except TransientError as exc:
+            last_exc = exc
+            if attempt < max_attempts - 1:
+                sleep(base_delay * 2 ** attempt)
+            # else: last attempt failed, fall through to re-raise after loop
+    assert last_exc is not None
+    raise last_exc
