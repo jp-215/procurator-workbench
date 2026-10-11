@@ -8,5 +8,4 @@ from ordersvc.errors import (  # noqa: F401
     TokenRevoked,
     TransientError,
     ValidationError,
-)idationError,
 )

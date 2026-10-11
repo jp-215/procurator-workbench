@@ -31,12 +31,4 @@ class Forbidden(OrderSvcError):
 
 
 class TransientError(OrderSvcError):
-    passss
-
-
-class Forbidden(OrderSvcError):
-    pass
-
-
-class TransientError(OrderSvcError):
     pass
